@@ -4,18 +4,20 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class WepConnect : MonoBehaviour
+public class WebConnect : MonoBehaviour
 {
     [SerializeField]
     string connectHttp = "";
 
-    static WepConnect instance = null;
+    static WebConnect instance = null;
+
+    public static WebConnect Instance { get => instance; set => instance = value; }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (!instance)
-            instance = this;
+        if (!Instance)
+            Instance = this;
         else
             Destroy(gameObject);
 
@@ -62,6 +64,21 @@ public class WepConnect : MonoBehaviour
         StartCoroutine(Call(connectHttp + "/auth/login", form));
     }
     
+    public void CreateAccount()
+    {
+        WWWForm form = new WWWForm();
+
+        GameObject id = GameObject.FindGameObjectWithTag("ID");
+        GameObject password = GameObject.FindGameObjectWithTag("Password");
+
+        string idText = id.GetComponent<Text>().text;
+        string passwordText = password.GetComponent<Text>().text;
+
+        form.AddField("username", idText);
+        form.AddField("password", passwordText);
+
+        StartCoroutine(Call(connectHttp + "/auth/CreateAccount", form));
+    }
     void ErrorException(UnityWebRequest wwwUrl)
     {
         if (wwwUrl.isNetworkError || wwwUrl.isHttpError)
